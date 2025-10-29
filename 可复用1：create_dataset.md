@@ -114,3 +114,50 @@ print('Size of validation set: {}'.format(val_x.shape))
 *   **可复用性**：**极高**。这是划分数据集最基本、最常用的方法。
     *   **下次你需要改的**：基本只有 `VAL_RATIO` 这个比例值。
     *   **代码结构完全不用变**。
+
+---
+好的，这是为这段代码提炼的精华笔记。
+
+---
+
+## **3.创建 DataLoader**
+
+**一句话总结：** 将创建好的 `Dataset` 对象（如 `train_set`）进一步封装成 `DataLoader`，以便在训练时进行批量化、随机化的高效数据供给。
+
+---
+#### 1. 要点代码
+```python
+# 1. 定义超参数：批次大小
+BATCH_SIZE = 64
+
+from torch.utils.data import DataLoader
+
+# 2. 准备好你的 Dataset 对象 (此处的 TIMITDataset 是上一模块创建的)
+train_set = TIMITDataset(train_x, train_y)
+val_set = TIMITDataset(val_x, val_y)
+
+# 3. 为训练集创建 DataLoader，关键是 shuffle=True
+train_loader = DataLoader(train_set, batch_size=BATCH_SIZE, shuffle=True)
+
+# 4. 为验证集创建 DataLoader，关键是 shuffle=False
+val_loader = DataLoader(val_set, batch_size=BATCH_SIZE, shuffle=False)
+```
+---
+#### 2. 关键要点 & 铁律
+
+*   **目的**：`DataLoader` 是 PyTorch 的“数据引擎”，它自动完成三件事：
+    *   **批量 (Batching)**：将数据打包成一小批 (batch)，以适配 GPU 并进行梯度下降。
+    *   **打乱 (Shuffling)**：在每个训练周期 (epoch) 开始时，随机打乱数据顺序。
+    *   **并行加载 (Parallel Loading)**：在后台提前加载数据，避免 CPU/GPU 等待。
+
+*   **配置铁律 (Iron Law)**：
+    *   **`shuffle=True` (用于 `train_loader`)**: **必须！** 这是为了防止模型学到数据的排列顺序，增强模型的泛化能力。
+    *   **`shuffle=False` (用于 `val_loader` 和 `test_loader`)**: **必须！** 验证和测试时，我们需要在固定的、可复现的数据顺序上评估模型性能。
+---
+#### 3. 可复用性
+
+*   **极高**。这是 PyTorch 训练流程中 **不可或缺** 的标准步骤。
+*   **下次你需要改的**：
+    *   `BATCH_SIZE`：根据你的模型大小和显存调整。
+    *   `TIMITDataset`: 替换成你为当前项目创建的 `Dataset` 类实例。
+    *   （可选）添加 `num_workers=4` 或更高，以加速数据加载。
