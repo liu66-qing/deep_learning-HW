@@ -204,3 +204,38 @@ except StopIteration:
 #####     *   `batch_size` 是根据你的内存和模型大小来定的。
 #####     *   `shuffle` 对于训练集通常是 `True`，对于验证集和测试集通常是 `False`。
 #####     *   `num_workers` 可以调整数据加载的并行程度。
+
+
+
+---
+
+## 分割训练集与验证集
+
+**一句话总结：** 将一份完整的数据集，按比例（如此处的80/20）切分成 **训练集 (Training Set)** 和 **验证集 (Validation Set)**。
+
+```python
+# --- 要点代码 ---
+
+# 1. 定义验证集所占的比例 (e.g., 20%)
+VAL_RATIO = 0.2
+
+# 2. 计算训练集的样本数量，从而找到分割点
+percent = int(train.shape[0] * (1 - VAL_RATIO))
+
+# 3. 使用数组切片，将特征(train)和标签(train_label)同时分割
+#    [:percent] -> 从头到分割点 (新的训练集)
+#    [percent:] -> 从分割点到结尾 (验证集)
+train_x, train_y, val_x, val_y = train[:percent], train_label[:percent], train[percent:], train_label[percent:]
+
+# 4. (可选但推荐) 打印形状以验证分割是否正确
+print('Size of training set: {}'.format(train_x.shape))
+print('Size of validation set: {}'.format(val_x.shape))
+```
+
+### 关键要点 & 可复用性
+
+*   **目的**：训练时用 `train_x, train_y`，每训练一阵就用 `val_x, val_y` 评估一下模型效果，防止过拟合。
+*   **核心技术**：Python 的**数组切片 (Slicing)**。 `array[:index]` 取前面部分，`array[index:]` 取后面部分。
+*   **可复用性**：**极高**。这是划分数据集最基本、最常用的方法。
+    *   **下次你需要改的**：基本只有 `VAL_RATIO` 这个比例值。
+    *   **代码结构完全不用变**。
