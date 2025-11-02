@@ -7,7 +7,7 @@
 
 ---
 
-#### 1. 核心代码模板 (直接复制)
+#### 1. 代码模板 (直接复制)
 
 ```python
 import torch
@@ -107,7 +107,7 @@ print('Size of training set: {}'.format(train_x.shape))
 print('Size of validation set: {}'.format(val_x.shape))
 ```
 
-### 关键要点 & 可复用性
+### 可复用
 
 *   **目的**：训练时用 `train_x, train_y`，每训练一阵就用 `val_x, val_y` 评估一下模型效果，防止过拟合。
 *   **核心技术**：Python 的**数组切片 (Slicing)**。 `array[:index]` 取前面部分，`array[index:]` 取后面部分。
@@ -115,8 +115,7 @@ print('Size of validation set: {}'.format(val_x.shape))
     *   **下次你需要改的**：基本只有 `VAL_RATIO` 这个比例值。
     *   **代码结构完全不用变**。
 
----
-好的，这是为这段代码提炼的精华笔记。
+
 
 ---
 
@@ -154,10 +153,10 @@ val_loader = DataLoader(val_set, batch_size=BATCH_SIZE, shuffle=False)
     *   **`shuffle=True` (用于 `train_loader`)**: **必须！** 这是为了防止模型学到数据的排列顺序，增强模型的泛化能力。
     *   **`shuffle=False` (用于 `val_loader` 和 `test_loader`)**: **必须！** 验证和测试时，我们需要在固定的、可复现的数据顺序上评估模型性能。
 ---
-#### 3. 可复用性
+#### 3. 可复用
 
 *   **极高**。这是 PyTorch 训练流程中 **不可或缺** 的标准步骤。
-*   **下次你需要改的**：
+*   **下次要改的**：
     *   `BATCH_SIZE`：根据你的模型大小和显存调整。
     *   `TIMITDataset`: 替换成你为当前项目创建的 `Dataset` 类实例。
     *   （可选）添加 `num_workers=4` 或更高，以加速数据加载。
