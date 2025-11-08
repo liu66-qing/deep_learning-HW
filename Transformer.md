@@ -779,7 +779,7 @@ class PositionalEncoding(nn.Module):
 
 如图，经过 tokenizer 映射后的输出先经过 Embedding 层和 Positional Embedding 层编码，然后进入上一节讲过的 N 个 Encoder 和 N 个 Decoder（在 Transformer 原模型中，N 取为6），最后经过一个线性层和一个 Softmax 层就得到了最终输出。
 
-基于之前所实现过的组件，我们实现完整的 Transformer 模型：
+基于之前所实现过的组件，可以实现完整的 Transformer 模型：
 
 ```python
 class Transformer(nn.Module):
